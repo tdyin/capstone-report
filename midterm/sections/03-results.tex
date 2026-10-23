@@ -1,0 +1,72 @@
+\section{Results (Partial)}
+
+\begin{table}[!t]
+\caption{Evidence scope. Caps are assisted speeds in m/s; a cell is one condition and setting.}
+\label{tab:evidence}
+\centering\scriptsize\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}p{0.25\columnwidth}p{0.36\columnwidth}p{0.31\columnwidth}@{}}
+\toprule
+Evidence & Configuration & Sample / purpose \\
+\midrule
+HTTP integration & Uncoupled; cap 0.15 & 9 trials; reliability \\
+Intent sweep & Uncoupled; cap 0.15; vary $h,\sigma$ & 400 reaches/setting \\
+Coupling test & Off/on; $k=0.75$, cap 0.15 & 400 reaches per cell \\
+Speed comparison & $k=0.75$, cap 0.15 vs.\ $k=1.5$, cap 0.6 & 120 reaches per cell \\
+Headset sessions & $k=1.5$, cap 0.6 & 1 tester; 15 + 18 completed trials \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Concurrent Control in Integration Runs}
+The service and player completed nine scripted HTTP trials without refused or
+lost signals, causal-motion violations, or data loss. At 72 frames/s,
+observation-to-application latency had medians of 16--40\,ms and a 95th
+percentile of 42\,ms.
+
+\begin{figure}[!t]
+\centering
+\input{figures/fig-headset-results}
+\caption{Complete session 2; six trials/condition. Time: trials (circles),
+medians (bars and labels). Effort: two block ratings. Marks are offset vertically.
+Episodes are state-based totals; manual has no AI. Engagement is median trial
+coverage. Lower counts accompany less engagement.}
+\label{fig:headset}
+\end{figure}
+
+\subsection{Intent Inference and Assistance Availability}
+Compared with nearest, the chosen setting ($h = 0.5$, $\sigma = 0.08$) about
+halved false-assist time toward distractor P (0.511 vs.\ 1.006\,s per reach crossing P).
+The cost was lower coverage (0.327 vs.\ 0.387) and a
+longer median reach-start-to-first-correct-assistance time (2.01 vs.\ 1.67\,s;
+among reaches receiving correct assistance). These parameters were selected
+on the same sweep; the comparison is exploratory.
+
+\subsection{Coordinating Human Motion and Assisted Depth}
+During 1\,s hovers over P (75 per condition), depth travel \emph{after} the
+0.15\,s grace was 110.5\,mm (nearest) and 123.7\,mm (intent) without coupling,
+and zero with it. Coupled nearest still moved 21.7\,mm during the grace.
+In 400 reaches/condition, coupling required extra scripted movement on
+32\% (nearest) and 77\% (intent), versus 0\% and 9\% without coupling.
+
+In the separate speed comparison, raising $k$ and the cap reduced extra-motion
+rates from 30\% to 17\% (nearest) and 72\% to 53\% (intent).
+Mean wrong-hold travel rose from 49.7 to 83.1\,mm per reach (nearest) and
+18.2 to 33.1\,mm (intent): faster recovery increased misdirected travel.
+
+\subsection{Headset Testing (Developer)}
+After a pilot stopped at discomfort 4, interrupted session 1 completed
+15 measured trials (M: 3, N: 6, I: 6), excluding three incomplete attempts.
+Session 2 completed 18/18 (six/condition) plus three practice trials, without
+data loss, causal-motion violations, or no-signal pauses. All measured
+completions used the final configuration.
+
+Median trial times (M/N/I) were 36.5/11.7/13.4\,s in session 1 and
+11.2/9.8/11.4\,s in session 2 (Fig.~\ref{fig:headset}). Wrong-target assistance episodes (N/I,
+session totals) were 21/7 and 9/2, respectively. In session 2, median
+wrong-hold depth travel was 39.6/0\,mm per trial, but maximum single-reach
+travel was 185.8/93.3\,mm. Extra motion was required on 0/24 nearest and
+1/24 intent cued reaches.
+
+The developer reported lower effort with assistance (1--2 versus 7),
+discomfort 1, no clear nearest/intent difference, and no stereo artifacts
+after fixes.

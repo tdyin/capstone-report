@@ -1,0 +1,5 @@
+condition,setting,k,capMps,extraMotionReachesPct,wrongHoldDepthMmPerReach
+nearest,old,0.75,0.15,30,49.7
+intent,old,0.75,0.15,72,18.2
+nearest,new,1.5,0.6,17,83.1
+intent,new,1.5,0.6,53,33.1

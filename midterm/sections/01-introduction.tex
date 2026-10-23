@@ -1,0 +1,24 @@
+\section{Introduction}
+
+A mouse supplies planar movement, but reaching a hold in our extended reality
+(XR) climbing task also requires depth adjustment. Managing both alongside
+grabbing adds controls for the person to coordinate. We ask: \emph{How can a
+person and AI control complementary parts of an XR action simultaneously?}
+We explore depth assistance while the person steers laterally and grabs,
+aiming to reduce simultaneous control demands. AI here means heuristic intent
+inference with deterministic control.
+
+Assigning different axes does not determine which hold assistance should
+approach or when it should move. Shared-control research connects goal
+prediction with assistance arbitration~\cite{losey2018review,dragan2013policy,javdani2018shared};
+motion provides pointing cues~\cite{lank2007endpoint}, but misprediction has
+costs~\cite{ruiz2010speeding}. Assistance must also respond when human movement
+stops. Incorrect assistance can move toward an unintended hold; conservative
+assistance can leave depth unfinished.
+
+Using simulations, integration tests, and two headset sessions with one
+developer, we compare manual, nearest-hold, and intent-based depth control.
+We examine tradeoffs among assistance availability, unwanted depth movement,
+and additional human movement. This exploratory study supports the long-term
+goal of alternative devices performing common XR actions across applications;
+broader workload and accessibility benefits remain unestablished.

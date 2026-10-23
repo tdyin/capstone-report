@@ -1,0 +1,25 @@
+% Fig. 1: two parallel control paths, read from left to right.
+\begin{tikzpicture}[
+  font=\footnotesize, >={Stealth[length=4pt]},
+  box/.style={draw, rounded corners=2pt, align=center, inner sep=4pt,
+    text width=3.8cm, minimum height=0.80cm},
+  flow/.style={->, thick}
+]
+\node[box, fill=blue!7] (human) at (0,0.50)
+  {\textbf{Human moves the mouse}\\Steers hand left/right, up/down};
+\node[box, fill=orange!10] (ai) at (0,-0.50)
+  {\textbf{AI infers a target hold}\\Hand motion + hold geometry};
+\node[box, fill=blue!7] (xy) at (5.1,0.50)
+  {\textbf{Human controls $x,y$}\\Movement along the wall};
+\node[box, fill=orange!10] (z) at (5.1,-0.50)
+  {\textbf{AI adjusts $z$}\\Depth toward the inferred hold};
+\node[box, text width=4.8cm, minimum height=1.55cm,
+  fill=gray!7] (pose) at (10.8,0)
+  {\textbf{One hand pose}\\
+   $(x_{\rm human},y_{\rm human},z_{\rm AI})$\\
+   Unity combines both during the same reach};
+\draw[flow] (human) -- (xy);
+\draw[flow] (ai) -- (z);
+\draw[flow] (xy.east) -- ([yshift=0.38cm]pose.west);
+\draw[flow] (z.east) -- ([yshift=-0.38cm]pose.west);
+\end{tikzpicture}

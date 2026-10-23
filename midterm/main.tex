@@ -1,0 +1,60 @@
+% CHRIS midterm report (ELEC 594): three-page IEEE conference paper.
+% Select legacy font encoding before IEEEtran chooses its Times font family.
+% This keeps IEEE fonts consistent in Tectonic/XeTeX and pdfLaTeX.
+\RequirePackage[T1]{fontenc}
+\documentclass[conference,letterpaper]{IEEEtran}
+\IEEEoverridecommandlockouts
+
+\usepackage{cite}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{url}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usetikzlibrary{arrows.meta,positioning,calc}
+\usepackage[hidelinks]{hyperref}
+
+% Slightly tighter spacing between floats and text to fit three pages.
+\setlength{\textfloatsep}{6pt plus 2pt minus 2pt}
+% Preserve the font size and margins while fitting the expanded Methods prose.
+\linespread{0.98}
+
+\title{Simultaneous AI-Assisted Shared Control for\\Alternative XR Input: A Climbing Testbed}
+\author{%
+\IEEEauthorblockN{Tongda Yin, Prerna Khanna, Momona Yamagami, and Robert LiKamWa}
+\IEEEauthorblockA{Department of Electrical \& Computer Engineering, Rice University,\\
+Houston, TX 77005, United States of America}}
+
+% Keep the wide overview on page 1, immediately below the author block.
+\makeatletter
+\IEEEaftertitletext{%
+  \noindent\begin{minipage}{\textwidth}
+  \centering
+  \input{figures/fig-architecture}
+  \def\@captype{figure}
+  \caption{Two contributions, one reach: the human steers along the wall while
+  AI supplies depth. Grabbing and override remain human-controlled.}
+  \label{fig:arch}
+  \end{minipage}\par\vspace{4pt}}
+\makeatother
+
+\begin{document}
+\maketitle
+
+\input{sections/00-abstract}
+\begin{IEEEkeywords}
+Extended reality, alternative input, shared control, intent inference.
+\end{IEEEkeywords}
+\input{sections/01-introduction}
+\input{sections/02-methods}
+\input{sections/03-results}
+\input{sections/04-discussion}
+\input{sections/07-conclusion}
+\input{sections/05-acknowledgements}
+\input{sections/06-credit}
+
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+\end{document}

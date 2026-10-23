@@ -1,0 +1,42 @@
+% Fig. 3: direct comparison from the existing sweep, no new measurements.
+% Rows 0 and 4 are nearest and selected h=0.5, sigma=0.08 in the source CSV.
+\pgfplotstableread[col sep=comma]{figures/intent-sweep.csv}\sweepdata
+\pgfplotstablegetelem{0}{passS}\of\sweepdata
+\let\nearestFalse\pgfplotsretval
+\pgfplotstablegetelem{4}{passS}\of\sweepdata
+\let\intentFalse\pgfplotsretval
+\pgfplotstablegetelem{0}{coverage}\of\sweepdata
+\pgfmathsetmacro{\nearestCoverage}{100*\pgfplotsretval}
+\pgfplotstablegetelem{4}{coverage}\of\sweepdata
+\pgfmathsetmacro{\intentCoverage}{100*\pgfplotsretval}
+\begin{tikzpicture}
+\pgfplotsset{comparison/.style={
+  xbar, width=2.75cm, height=1.40cm, scale only axis,
+  font=\footnotesize, xmin=0, ymin=-0.55, ymax=1.55,
+  ytick={0,1}, yticklabels={Intent,Nearest},
+  axis x line*=bottom, axis y line*=left,
+  tick align=outside, bar width=9pt, bar shift=0pt,
+  xmajorgrids, grid style={gray!20},
+  nodes near coords, point meta=x,
+  every node near coord/.append style={font=\scriptsize, text=black},
+  title style={align=center, font=\footnotesize},
+}}
+\begin{axis}[comparison, name=falseplot,
+  xmax=1.35, xtick={0,0.5,1.0},
+  title={\textbf{Wrong-target assistance}\\Time (s/reach)},
+  xlabel={Less is better},
+  every node near coord/.append style={/pgf/number format/fixed,
+    /pgf/number format/precision=3}]
+\addplot[fill=gray!45, draw=black] coordinates {(\nearestFalse,1)};
+\addplot[fill=orange!55, draw=black] coordinates {(\intentFalse,0)};
+\end{axis}
+\begin{axis}[comparison, at={(falseplot.south east)}, anchor=south west,
+  xshift=0.65cm, xmax=50, xtick={0,20,40}, yticklabels={,},
+  title={\textbf{Correct-target coverage}\\Time covered (\%)},
+  xlabel={More is better},
+  every node near coord/.append style={/pgf/number format/fixed,
+    /pgf/number format/precision=1}]
+\addplot[fill=gray!45, draw=black] coordinates {(\nearestCoverage,1)};
+\addplot[fill=orange!55, draw=black] coordinates {(\intentCoverage,0)};
+\end{axis}
+\end{tikzpicture}

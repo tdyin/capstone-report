@@ -1,0 +1,115 @@
+\section{Methods}
+
+\subsection{Testbed and Input}
+The person remains seated while controlling a virtual climbing task built
+in Unity using OpenXR~\cite{openxr} and the XR Interaction
+Toolkit~\cite{unity-xri}, connected through Meta Quest Link. The environment
+has no falling or momentum; upward movement is capped at 0.25\,m/s, and a
+visual vignette is applied~\cite{fernandes2016combating}.
+
+Mouse movement positions the active hand along the wall. Pressing the grab
+button attaches the hand to a reachable hold; dragging downward then raises
+the virtual body. Releasing the button leaves that hand attached and switches
+control to the other hand. An unsuccessful grab preserves existing support.
+The grab action uses the left mouse button, with Space used in earlier runs.
+E/Q provide manual depth adjustment at 0.15\,m/s.
+
+\subsection{Simultaneous Control and Authority}
+The division of control is fixed: the person controls lateral hand movement,
+grabbing, and climbing, while assistance adjusts reaching depth. Unity supplies
+the Python service with hand positions, the active hand, reaching and gripping
+states, and hold geometry. The service uses this information to infer a target
+hold and calculate bounded depth adjustments. Images, language, and experimental
+target cues are not used for inference.
+
+During each Unity update, human-controlled lateral coordinates $(x,y)$ are
+combined with the accepted assisted depth coordinate $z$ to form one hand pose
+(Fig.~\ref{fig:arch}). The person can continue moving the mouse while assistance
+updates depth. Both therefore contribute during the same reach, even though
+the service and Unity update asynchronously.
+
+The person retains control over grabbing and depth override. Grabbing freezes
+depth, and pressing E/Q transfers depth control to the person for the remainder
+of that reach. Unity rejects stale or invalid assistance updates and handles
+interruptions locally; resuming after an interruption requires deliberate
+user action.
+
+\subsection{Depth Target and Conditions}
+Hand contact uses a 0.04\,m-radius sphere; holds protrude 0.04, 0.08, or
+0.12\,m. Assistance targets near-surface contact within a hold's lateral grasp
+region, where valid depth exists. Grabs accept a broader overlap interval;
+retained depth can permit the next grab without adjustment.
+
+Conditions are \emph{manual} (M; E/Q), \emph{assist-nearest}
+(N; the nearest unoccupied hold whose lateral grasp region contains the hand),
+and \emph{assist-intent} (I; motion-inferred target). Both assisted conditions
+share a depth controller; intent adds the selection rules below.
+
+\begin{figure}[!t]
+\centering
+\input{figures/fig-gate}
+\caption{Intent-assisted depth (nearest has no confidence gate). Uncertainty holds
+depth. After lateral motion stops, the depth budget ends after 150\,ms.}
+\label{fig:gate}
+\end{figure}
+
+\subsection{Intent Inference and Target Selection}
+At 10\,Hz, intent estimates lateral velocity $\vec{v}$ over 250\,ms,
+caps speed at 0.3\,m/s, and projects lateral position
+$\vec{q}$ to $\hat{\vec{q}}=\vec{q}+(0.5\,\mathrm{s})\vec{v}$.
+For unoccupied hold $i$ with lateral centre $\vec{c}_i$ and grasp radius
+$r_i$, predicted distance outside its grasp region is
+$d_i=\max(0,\|\hat{\vec{q}}-\vec{c}_i\|-r_i)$.
+Weights $w_i=\exp(-d_i^2/2\sigma^2)$, with $\sigma=0.08$\,m, and a
+``none'' weight of 0.1 are normalized to scores $p_i$.
+
+Selection requires score $p_i\ge0.80$, a 0.25 lead over the runner-up,
+and valid grasp geometry and depth, maintained for 200\,ms. A selected target's
+score below 0.55 holds depth; persistence for 200\,ms withdraws the target.
+Invalid geometry withdraws it immediately (Fig.~\ref{fig:gate}). These rules
+follow prediction and arbitration~\cite{dragan2013policy,javdani2015shared};
+scores are uncalibrated, and thresholds and hysteresis are design choices.
+
+\subsection{Motion-Coupled Depth Control}
+Motion coupling limits both assisted conditions using lateral hand speed.
+For eligible target depth $z^*$ and current depth $z_t$, the maximum step
+$b_t$ and commanded change are
+\begin{equation}
+\begin{aligned}
+b_t &= \min(0.015\,\mathrm{m},\; 0.6\,\mathrm{m/s}\cdot\Delta t,\; k\tilde v_t\Delta t),\\
+\Delta z_t &= \operatorname{sgn}(z^*-z_t)\min(|z^*-z_t|,b_t).
+\end{aligned}
+\end{equation}
+Here $\Delta t$ is the observation interval and $k=1.5$. Effective speed
+$\tilde v_t$ uses lateral speed at or above 1\,cm/s, retaining the last such
+speed for a 0.15\,s grace period, then zero. Assistance thus continues briefly
+after stopping, then holds depth. Steps never exceed
+1.5\,cm, within the client's 2\,cm limit. Earlier coupled runs used $k=0.75$
+and a 0.15\,m/s cap.
+
+\subsection{Evaluation Design and Measures}
+Table~\ref{tab:evidence} summarizes simulations, integration trials, and headset
+sessions examining controller tradeoffs, signal delivery, and depth effort,
+respectively. The intent sweep served both tuning and evaluation; results
+are descriptive.
+
+One developer tested two headset sessions. Each planned one practice
+trial/condition and six three-trial blocks: M-N-I-I-N-M, then N-I-M-M-I-N.
+Trials required four cued holds; only completed measured trials enter separate
+session summaries. Block depth effort used ``Getting the depth right took
+effort'' (1: none; 7: a lot). Discomfort $\ge4$ or no rating within 60\,s
+stopped the session.
+
+Trial time spans ready to finish. Assistance-state episodes span entry to a
+state/target change and are scored against each overlapping reach/cue interval;
+wrong-target episodes select a non-cued hold. Headset \emph{engagement coverage}
+is the fraction of intervals containing an episode, summarized by the trial
+median. States need not produce movement. Wrong-hold travel measures applied
+depth changes toward non-cued holds. Simulation coverage averages within-reach
+time assisted toward the cue. Causal checks flag unauthorized movement or
+direction/cap violations.
+
+Simulated \emph{extra motion} is lateral movement added after lateral arrival
+and a depth stall of about 0.3\,s. The headset metric requires a completed cued
+reach with a logged coupling hold of at least 0.3\,s followed by resumed
+assistance.

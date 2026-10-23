@@ -1,0 +1,81 @@
+% Completed session 2 only: six trials/condition, one developer.
+% Read rows 3--5 (manual, nearest, intent) from the verified session extract.
+\pgfplotstableread[col sep=comma]{figures/headset-sessions.csv}\headsetdata
+\newcommand{\readheadset}[3]{%
+  \pgfplotstablegetelem{#1}{#2}\of\headsetdata\let#3\pgfplotsretval}
+\readheadset{3}{time_median_s}{\manualTime}
+\readheadset{4}{time_median_s}{\nearestTime}
+\readheadset{5}{time_median_s}{\intentTime}
+\readheadset{4}{false_assist_episodes_total}{\nearestEpisodes}
+\readheadset{5}{false_assist_episodes_total}{\intentEpisodes}
+\readheadset{3}{depth_effort_ratings}{\manualEffort}
+\readheadset{4}{depth_effort_ratings}{\nearestEffort}
+\readheadset{5}{depth_effort_ratings}{\intentEffort}
+\def\splitratings#1;#2\relax{\def\firstRating{#1}\def\secondRating{#2}}
+{\footnotesize\textbf{Session 2: one developer}\par}\vspace{3pt}
+\begin{tikzpicture}
+\pgfplotsset{headsetpanel/.style={
+  scale only axis, height=2.30cm, font=\footnotesize,
+  ymin=-0.90, ymax=2.55, ytick={0,1,2},
+  axis x line*=bottom, axis y line*=left,
+  tick align=outside, xmajorgrids, grid style={gray!20},
+  title style={align=center, font=\footnotesize},
+  clip=false,
+}, timepoint/.style={only marks, mark=|, mark size=4pt, ultra thick}}
+\begin{axis}[headsetpanel, name=timeplot, width=2.10cm,
+  xmin=0, xmax=21, xtick={0,10,20},
+  yticklabels={Intent,Nearest,Manual},
+  title={\textbf{Trial time}\\Seconds}]
+% The trial CSV is ordered manual (0--5), nearest (6--11), intent (12--17).
+\addplot[only marks, mark=o, mark size=1.4pt, gray!80!black,
+  restrict expr to domain={\coordindex}{0:5}]
+  table[col sep=comma, x=time_s, y=plot_y] {figures/headset-session2-trials.csv};
+\addplot[only marks, mark=o, mark size=1.4pt, blue!65!black,
+  restrict expr to domain={\coordindex}{6:11}]
+  table[col sep=comma, x=time_s, y=plot_y] {figures/headset-session2-trials.csv};
+\addplot[only marks, mark=o, mark size=1.4pt, orange!85!black,
+  restrict expr to domain={\coordindex}{12:17}]
+  table[col sep=comma, x=time_s, y=plot_y] {figures/headset-session2-trials.csv};
+\addplot[timepoint, gray!80!black] coordinates
+  {(\manualTime,2)};
+\addplot[timepoint, blue!65!black] coordinates
+  {(\nearestTime,1)};
+\addplot[timepoint, orange!85!black] coordinates
+  {(\intentTime,0)};
+\node[font=\scriptsize\bfseries, anchor=north, inner sep=0.5pt]
+  at (axis cs:\manualTime,1.65) {\pgfmathprintnumber[fixed,precision=1]{\manualTime}};
+\node[font=\scriptsize\bfseries, anchor=north, inner sep=0.5pt]
+  at (axis cs:\nearestTime,0.65) {\pgfmathprintnumber[fixed,precision=1]{\nearestTime}};
+\node[font=\scriptsize\bfseries, anchor=north, inner sep=0.5pt]
+  at (axis cs:\intentTime,-0.35) {\pgfmathprintnumber[fixed,precision=1]{\intentTime}};
+\end{axis}
+\begin{axis}[headsetpanel, name=effortplot, width=1.55cm,
+  at={(timeplot.south east)}, anchor=south west, xshift=0.55cm,
+  xmin=0.5, xmax=7.5, xtick={1,4,7}, yticklabels={,,},
+  title={\textbf{Depth effort}\\Rating (1--7)}]
+\expandafter\splitratings\manualEffort\relax
+\addplot[only marks, mark=*, mark size=2pt, gray!80!black]
+  coordinates {(\firstRating,2.10) (\secondRating,1.90)};
+\expandafter\splitratings\nearestEffort\relax
+\addplot[only marks, mark=*, mark size=2pt, blue!65!black]
+  coordinates {(\firstRating,1.10) (\secondRating,0.90)};
+\expandafter\splitratings\intentEffort\relax
+\addplot[only marks, mark=*, mark size=2pt, orange!85!black]
+  coordinates {(\firstRating,0.10) (\secondRating,-0.10)};
+\node[font=\scriptsize, align=center, anchor=north, yshift=-15pt]
+  at (rel axis cs:0.5,0) {1 = none\\7 = a lot};
+\end{axis}
+\begin{axis}[headsetpanel, width=1.80cm,
+  at={(effortplot.south east)}, anchor=south west, xshift=0.55cm,
+  xmin=0, xmax=12, xtick={0,5,10}, yticklabels={,,},
+  title={\textbf{Wrong-target}\\State episodes},
+  xbar, bar width=7pt, bar shift=0pt,
+  nodes near coords, point meta=x,
+  every node near coord/.append style={font=\scriptsize, text=black}]
+\addplot[fill=blue!30, draw=blue!65!black] coordinates {(\nearestEpisodes,1)};
+\addplot[fill=orange!40, draw=orange!85!black] coordinates {(\intentEpisodes,0)};
+\node[font=\scriptsize] at (axis cs:5,2) {N/A};
+\node[font=\scriptsize, align=center, anchor=north, yshift=-15pt]
+  at (rel axis cs:0.5,0) {Engagement coverage\\Nearest 100\%; Intent 75\%};
+\end{axis}
+\end{tikzpicture}

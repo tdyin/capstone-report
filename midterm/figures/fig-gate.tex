@@ -1,0 +1,20 @@
+% Fig. 2: conditions for moving depth; exact thresholds remain in Methods.
+\begin{tikzpicture}[
+  font=\footnotesize, >={Stealth[length=4pt]},
+  box/.style={draw, rounded corners=2pt, align=center, inner sep=4pt,
+    text width=4.50cm},
+  flow/.style={->, thick}
+]
+\node[box, fill=orange!10] (infer) at (0,0)
+  {\textbf{1. Predict the intended hold}\\Project recent lateral hand motion};
+\node[box, fill=orange!10] (check) at (0,-1.35)
+  {\textbf{2. Check before moving}\\Confident + stable target?\\Inside grasp region + valid depth?};
+\node[box, fill=orange!10] (move) at (0,-2.75)
+  {\textbf{3. Advance depth toward contact}\\Small steps coupled to lateral motion};
+\node[draw, rounded corners=2pt, fill=gray!7,
+  align=center, text width=1.60cm, inner sep=4pt] (wait) at (3.95,-1.35)
+  {\textbf{Hold depth}\\Keep observing};
+\draw[flow] (infer) -- (check);
+\draw[flow] (check) -- node[right, fill=white, inner sep=1pt] {yes} (move);
+\draw[flow] (check) -- node[above, inner sep=1pt] {no} (wait);
+\end{tikzpicture}
